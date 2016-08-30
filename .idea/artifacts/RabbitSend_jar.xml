@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="RabbitSend:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/RabbitSend_jar</output-path>
+    <root id="archive" name="RabbitSend.jar">
+      <element id="module-output" name="Rabbit" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/rabbitmq/amqp-client/3.5.1/amqp-client-3.5.1.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

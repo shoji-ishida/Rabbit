@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_rabbit" default="compile.module.rabbit">
+  <dirname property="module.rabbit.basedir" file="${ant.file.module_rabbit}"/>
+  
+  <property name="module.jdk.home.rabbit" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.rabbit" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.rabbit" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.rabbit" value="-encoding UTF-8 -source 8 -target 8 ${compiler.args}"/>
+  
+  <property name="rabbit.output.dir" value="${module.rabbit.basedir}/out/production/Rabbit"/>
+  <property name="rabbit.testoutput.dir" value="${module.rabbit.basedir}/out/test/Rabbit"/>
+  
+  <path id="rabbit.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="rabbit.module.production.classpath">
+    <path refid="${module.jdk.classpath.rabbit}"/>
+    <path refid="library.com.rabbitmq:amqp-client:3.5.1.classpath"/>
+  </path>
+  
+  <path id="rabbit.runtime.production.module.classpath">
+    <pathelement location="${rabbit.output.dir}"/>
+    <path refid="library.com.rabbitmq:amqp-client:3.5.1.classpath"/>
+  </path>
+  
+  <path id="rabbit.module.classpath">
+    <path refid="${module.jdk.classpath.rabbit}"/>
+    <pathelement location="${rabbit.output.dir}"/>
+    <path refid="library.com.rabbitmq:amqp-client:3.5.1.classpath"/>
+  </path>
+  
+  <path id="rabbit.runtime.module.classpath">
+    <pathelement location="${rabbit.testoutput.dir}"/>
+    <pathelement location="${rabbit.output.dir}"/>
+    <path refid="library.com.rabbitmq:amqp-client:3.5.1.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.rabbit">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.rabbit">
+    <patternset refid="excluded.from.module.rabbit"/>
+  </patternset>
+  
+  <path id="rabbit.module.sourcepath">
+    <dirset dir="${module.rabbit.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.rabbit" depends="compile.module.rabbit.production,compile.module.rabbit.tests" description="Compile module Rabbit"/>
+  
+  <target name="compile.module.rabbit.production" depends="register.custom.compilers" description="Compile module Rabbit; production classes">
+    <mkdir dir="${rabbit.output.dir}"/>
+    <javac2 destdir="${rabbit.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.rabbit}/javac">
+      <compilerarg line="${compiler.args.rabbit}"/>
+      <bootclasspath refid="rabbit.module.bootclasspath"/>
+      <classpath refid="rabbit.module.production.classpath"/>
+      <src refid="rabbit.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.rabbit"/>
+    </javac2>
+    
+    <copy todir="${rabbit.output.dir}">
+      <fileset dir="${module.rabbit.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.rabbit.tests" depends="register.custom.compilers,compile.module.rabbit.production" description="compile module Rabbit; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.rabbit" description="cleanup module">
+    <delete dir="${rabbit.output.dir}"/>
+    <delete dir="${rabbit.testoutput.dir}"/>
+  </target>
+</project>
